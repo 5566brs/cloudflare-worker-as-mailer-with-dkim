@@ -130,7 +130,7 @@ DKIM_DOMAIN=....
 
 DKIM_SELECTOR=...
 
-DKIM_PRIVATE_KEY=<base64 encoded private key..>
+DKIM_PRIVATE_KEY=`<base64 encoded private key..>`
 
 
 
