@@ -50,7 +50,7 @@ const send = async (data) => {
 
     if (resp.status > 299 || resp.status < 200) {
         const respText = await resp.text();
-        return new Response(`Error sending email: ${resp.status} ${resp.statusText} ${respText}`, { status: 500 });
+        throw new Error(`${resp.status} ${resp.statusText} ${respText}`);
     }
 }
 
@@ -112,7 +112,7 @@ export default {
             await send(mailData)
         } catch (e) {
             console.error(`Error sending email: ${e}`);
-            return new Response('Internal Server Error', { status: 500 });
+            return new Response(`Error sending email: ${e}`, { status: 500 });
         }
 
         return new Response(JSON.stringify({ success: true }), {
