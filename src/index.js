@@ -2,21 +2,37 @@ import isEmail from 'validator/es/lib/isEmail';
 
 const toPersona = (data) => typeof data === 'string' ? { email: data } : data;
 
-const validFrom = (field) => {
+const tryIsEmail = (email) => {
     try {
-        if (isEmail(field) || (field === 'object' && isEmail(field.email)) || (field === 'object' && field.every(i => isEmail(i.email)))) {
+        return isEmail(email);
+    } catch (error) {
+        return false;
+    }
+
+}
+
+const validTo = (field) => {
+    try {
+        if (tryIsEmail(field) ||
+            (typeof field === 'object' && tryIsEmail(field.email)) ||
+            (typeof field === 'object' && field.every(i => tryIsEmail(i.email))) ||
+            (typeof field === 'object' && field.every(i => tryIsEmail(i)))) {
             return true
         }
     } catch (error) {
-        console.error(error)
+        return false
     }
 
     return false
 }
 
-const validTo = (field) => {
-    if (isEmail(field) || (field === 'object' && isEmail(field.email))) {
-        return true
+const validFrom = (field) => {
+    try {
+        if (tryIsEmail(field) || (typeof field === 'object' && tryIsEmail(field.email))) {
+            return true
+        }
+    } catch (error) {
+        console.error(error)
     }
     return false
 }
@@ -62,15 +78,15 @@ export default {
 
         const content = await request.json();
 
-        // to, from, subject, text/html, replyTo, cc, bcc, attachments
-        const { to, from, html, text, subject} = content;
-        if (!validFrom(from) || !validTo(to) || (!html && !text)|| !subject) {
+        const { to, from, html, text, subject } = content;
+
+        if (!validFrom(from) || !validTo(to) || (!html && !text) || !subject) {
             return new Response('bad request', { status: 400 });
         }
 
         let mailData = {
             personalizations: [{
-                to: typeof to === 'object' ? to.map(toPersona) : [toPersona(to)],
+                to: Array.isArray(to) ? to.map(toPersona) : [toPersona(to)],
 
             }],
             from: toPersona(from),
