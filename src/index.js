@@ -100,13 +100,11 @@ export default {
         if (bcc && validTo(bcc)) mailData.personalizations[0]['bcc'] = typeof bcc === 'object' ? bcc.map(toPersona) : [toPersona(bcc)];
         if (html) mailData.content.push({ type: 'text/html', value: html });
         if (text) mailData.content.push({ type: 'text/plain', value: text });
-        if (replyTo && validFrom(replyTo)) mailData.personalizations[0]['reply_to'] = toPersona(replyTo);
+        if (replyTo && validFrom(replyTo)) mailData['reply_to'] = toPersona(replyTo);
         if ((dkim_private_key && dkim_selector && dkim_domain) || (env.DKIM_DOMAIN && env.DKIM_SELECTOR && env.DKIM_PRIVATE_KEY)) {
-            mailData.personalizations[0] = {
-                dkim_private_key: dkim_private_key || env.DKIM_PRIVATE_KEY,
-                dkim_selector: dkim_selector || env.DKIM_SELECTOR,
-                dkim_domain: dkim_domain || env.DKIM_DOMAIN
-            }
+                mailData.personalizations[0]['dkim_private_key']= dkim_private_key || env.DKIM_PRIVATE_KEY;
+                mailData.personalizations[0]['dkim_selector'] = dkim_selector || env.DKIM_SELECTOR,
+                mailData.personalizations[0]['dkim_domain'] = dkim_domain || env.DKIM_DOMAIN
         }
 
         try {
