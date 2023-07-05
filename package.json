@@ -1,0 +1,15 @@
+{
+  "name": "cloudflare-worker-as-mailer-with-dkim",
+  "version": "0.0.0",
+  "devDependencies": {
+    "wrangler": "3.1.1"
+  },
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "validator": "^13.9.0"
+  }
+}
