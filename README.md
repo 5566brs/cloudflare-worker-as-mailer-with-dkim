@@ -120,13 +120,16 @@ You can also specify a reply to email address by adding a `replyTo` parameter to
 {
   "dkim_domain": "example.com",
   "dkim_selector": "dk2023",
-  "dkim_private_key": <base64 encoded private key..>
+  "dkim_private_key": "<base64 encoded private key..>"
 }
 ```
 
 or as env vars:
+
 DKIM_DOMAIN=....
+
 DKIM_SELECTOR=...
+
 DKIM_PRIVATE_KEY=<base64 encoded private key..>
 
 
