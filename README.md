@@ -33,22 +33,24 @@ Note: If you're facing [Domain Lockdown error](https://support.mailchannels.com/
 You may follow the steps listed in the [MailChannels documentation](https://support.mailchannels.com/hc/en-us/articles/7122849237389-Adding-a-DKIM-Signature) to set up DKIM for your domain.
 
 ## Example usage
+
 Once you have deployed this worker function to Cloudflare Workers, you can send emails by making a `POST` request to the worker on the `/api/email` endpoint with the following parameters:
 
 - Note you need to pass an `Authorization` header with the secure token you deployed. Like the following: `Authorization: TOKEN`
 
 js:
+
 ```JS
 fetch('https://my.mailer.user.workers.dev/api/email', {method: 'POST', body:JSON.stringify({from:'user@example.com', to: 'another@example.com', html: '<div>test</div>', subject: 'this is just a test!'}), headers: {'Authorization':TOKEN}}).then ...
 ```
 
-curl: 
+curl:
+
 ```bash
 curl https://my.mailer.user.workers.dev/api/email -H 'Authorization: $TOKEN' -H 'Content-Type: application/json' -d '{"from":"user@example.com", "to": "another@example.com", "html': "<div>test</div>", "subject": "this is just a test!"}'
 ```
 
 ### Basic Email
-
 
 ```json
 {
@@ -116,6 +118,7 @@ You can also specify a reply to email address by adding a `replyTo` parameter to
 ```
 
 ## DKIM
+
 ```json
 {
   "dkim_domain": "example.com",
@@ -124,7 +127,7 @@ You can also specify a reply to email address by adding a `replyTo` parameter to
 }
 ```
 
-or as env vars:
+or as env vars (see example command above or use browser):
 
 DKIM_DOMAIN=....
 
@@ -136,19 +139,20 @@ DKIM_PRIVATE_KEY=`<base64 encoded private key..>`
 
 ```json
 {
-  "attachment": {"filname": "file.pdf", "data":"<the actual content of the file>"}
+  "attachment": {
+    "filename": "file.pdf",
+    "data": "<the actual content of the file>"
+  }
 }
 ```
 
 or:
+
 ```json
 {
-  "attachment": [{"filname": "file.pdf", "data":"<the actual content of the file>"},
-  ...more attachments
+  "attachment": [
+    { "filename": "first.pdf", "data": "<the actual content of the file>" },
+    { "filename": "second.pdf", "data": "<the actual content of the file>" }
   ]
 }
 ```
-
-
-
-
