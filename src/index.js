@@ -94,17 +94,29 @@ export default {
             subject
         }
 
-        const { cc, bcc, replyTo, dkim_private_key, dkim_selector, dkim_domain } = content;
+        const { cc, bcc, replyTo, dkim_private_key, dkim_selector, dkim_domain, attachment } = content;
 
-        if (cc && validTo(cc)) mailData.personalizations[0]['cc'] = typeof cc === 'object' ? cc.map(toPersona) : [toPersona(cc)];
-        if (bcc && validTo(bcc)) mailData.personalizations[0]['bcc'] = typeof bcc === 'object' ? bcc.map(toPersona) : [toPersona(bcc)];
+        if (cc && validTo(cc)) mailData.personalizations[0]['cc'] = Array.isArray(cc) ? cc.map(toPersona) : [toPersona(cc)];
+        if (bcc && validTo(bcc)) mailData.personalizations[0]['bcc'] = Array.isArray(bcc) ? bcc.map(toPersona) : [toPersona(bcc)];
         if (html) mailData.content.push({ type: 'text/html', value: html });
         if (text) mailData.content.push({ type: 'text/plain', value: text });
         if (replyTo && validFrom(replyTo)) mailData['reply_to'] = toPersona(replyTo);
         if ((dkim_private_key && dkim_selector && dkim_domain) || (env.DKIM_DOMAIN && env.DKIM_SELECTOR && env.DKIM_PRIVATE_KEY)) {
-                mailData.personalizations[0]['dkim_private_key']= dkim_private_key || env.DKIM_PRIVATE_KEY;
-                mailData.personalizations[0]['dkim_selector'] = dkim_selector || env.DKIM_SELECTOR,
+            mailData.personalizations[0]['dkim_private_key'] = dkim_private_key || env.DKIM_PRIVATE_KEY;
+            mailData.personalizations[0]['dkim_selector'] = dkim_selector || env.DKIM_SELECTOR,
                 mailData.personalizations[0]['dkim_domain'] = dkim_domain || env.DKIM_DOMAIN
+        }
+        if (attachment) {
+            let attachmentArr = []
+            if (!Array.isArray(attachment)) {
+                attachmentArr.push(attachment);
+            } else {
+                attachmentArr = attachment;
+            }
+            if (attachmentArr.some(att => !att.filename || !att.data)) {
+                return new Response('bad request', { status: 400 });
+            }
+            attachmentArr.forEach(att => mailData.content.push({ type: `application/octet-stream; name="${att.filename}"; Content-Disposition: attachment; filename="${att.filename}"`, value: att.data }));
         }
 
         try {

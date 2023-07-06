@@ -132,5 +132,23 @@ DKIM_SELECTOR=...
 
 DKIM_PRIVATE_KEY=`<base64 encoded private key..>`
 
+## Attachments
+
+```json
+{
+  "attachment": {"filname": "file.pdf", "data":"<the actual content of the file>"}
+}
+```
+
+or:
+```json
+{
+  "attachment": [{"filname": "file.pdf", "data":"<the actual content of the file>"},
+  ...more attachments
+  ]
+}
+```
+
+
 
 
